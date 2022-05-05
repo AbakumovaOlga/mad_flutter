@@ -38,7 +38,12 @@ class Film extends FilmAbstract with ConvertLanguage {
 
   @override
   String toString() {
-    return id + " " + title + " " + convert(language)!.toPrettyString(convert(language)) + " ";
+    return id +
+        " " +
+        title +
+        " " +
+        convert(language)!.toPrettyString(convert(language)) +
+        " ";
   }
 }
 

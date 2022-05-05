@@ -1,55 +1,6 @@
-
 import 'package:flutter/material.dart';
 
 import 'film.dart';
-/*void main() {
-  List<Film> originalFilms = [
-    new Film(
-        id: "id1",
-        title: "title1",
-        picture: "picture1",
-        voteVerage: 1.1,
-        releaseDate: "releaseDate1",
-        description: "description1",
-        language: "russian"),
-    new Film(
-        id: "id2",
-        title: "title2",
-        picture: "picture2",
-        voteVerage: 2.2,
-        releaseDate: "releaseDate2",
-        description: "description2",
-        language: "russian"),
-    new Film(
-        id: "id3",
-        title: "title3",
-        picture: "picture3",
-        voteVerage: 3.3,
-        releaseDate: "releaseDate3",
-        description: "description3",
-        language: "english")
-  ];
-
-
-  Future<List<Film>> listFilms() async {
-    return originalFilms;
-  }
-
-  Future<String> stringFilms(List<Film> films) async {
-    String res = "";
-    films.forEach((element) {
-      res += (element.toString()) + "\n";
-    });
-    return res;
-  }
-
-  List<Film> filterFilmsVoteVerage(List<Film> films, double param) {
-    return films.where((element) => element.voteVerage > param).toList();
-  }
-
-
-  runApp(MyApp());
-}*/
 
 void main() => runApp(const MyApp());
 
@@ -80,18 +31,27 @@ class _HomePageState extends State<HomePage> with ConvertLanguage {
 
   @override
   void initState() {
-    _getFilms().then((value) {
+    _getFilms().then((valueFilms) {
       setState(() {
-        films = value;
+        films = valueFilms;
       });
     });
     super.initState();
   }
 
+  void allFilms() {
+    _getFilms().then((valueFilms) {
+      setState(() {
+        films = valueFilms;
+        filterLanguage = null;
+        filterWeight = false;
+      });
+    });
+  }
+
   Future<List<Film>> _getFilms() async {
     await Future.delayed(const Duration(seconds: 1));
     return [
-
       const Film(
           id: "id3",
           title: "title3",
@@ -116,16 +76,15 @@ class _HomePageState extends State<HomePage> with ConvertLanguage {
           releaseDate: "releaseDate1",
           description: "description1",
           language: "russian"),
-
     ];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('To do list'),
+          title: Text('Films'),
           centerTitle: true,
         ),
         body: Column(
@@ -158,15 +117,24 @@ class _HomePageState extends State<HomePage> with ConvertLanguage {
                 ),
               );
             }),
-            ElevatedButton(
-              onPressed: filterFilms,
-              child: const Text('Find'),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: filterFilms,
+                  child: const Text('Find'),
+                ),
+                ElevatedButton(
+                  onPressed: allFilms,
+                  child: const Text('All'),
+                ),
+              ],
             ),
-
             ...List.generate(films.length, (index) {
               return Flexible(
-                  child: FilmWidget(films[index].title, films[index].picture,
-                      convert(films[index].language)));
+                  child: FilmWidget(
+                      title: films[index].title,
+                      picture: films[index].picture,
+                      language: convert(films[index].language)));
             })
           ],
         ));
@@ -176,56 +144,51 @@ class _HomePageState extends State<HomePage> with ConvertLanguage {
     await _getFilms().then((valueFilms) {
       setState(() {
         if (filterWeight) {
-          films =
-              valueFilms.where((element) => element.voteVerage > 2 && (convert(element.language)==filterLanguage)).toList();
+          films = valueFilms
+              .where((element) =>
+                  element.voteVerage > 2 &&
+                  (convert(element.language) == filterLanguage))
+              .toList();
         } else {
-          films = valueFilms.where((element) => convert(element.language)==filterLanguage).toList();
+          films = valueFilms
+              .where((element) => convert(element.language) == filterLanguage)
+              .toList();
         }
       });
     });
   }
 }
 
-class FilmWidget extends StatefulWidget {
-  String _title;
-  String _picture;
-  Language? _language;
+class FilmWidget extends StatelessWidget {
+  const FilmWidget({
+    Key? key,
+    required this.title,
+    required this.language,
+    required this.picture,
+  }) : super(key: key);
 
-  @override
-  _FilmWidget createState() => _FilmWidget(_title, _picture, _language);
-
-  FilmWidget(this._title, this._picture, this._language);
-}
-
-class _FilmWidget extends State<FilmWidget> {
-  String _title;
-  String _picture;
-  Language? _language;
-
-  _FilmWidget(this._title, this._picture, this._language);
-
-  refresh() {
-    setState(() {});
-  }
+  final String title;
+  final String picture;
+  final Language? language;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Row(children: [
         Text(
-          _title,
+          title,
           textAlign: TextAlign.center,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
         ),
         Flexible(
             child: Image.asset(
-          "assets/images/$_picture.png",
+          "assets/images/$picture.png",
           height: 100,
           width: 100,
         )),
         Text(
-          _language!.toPrettyString(_language),
+          language!.toPrettyString(language),
           textAlign: TextAlign.center,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
