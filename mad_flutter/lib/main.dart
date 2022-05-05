@@ -1,4 +1,3 @@
-
 import 'dart:ffi';
 
 import 'film.dart';
@@ -15,28 +14,25 @@ Future<void> main() async {
         "english")
   ];
 
-  Future<List<Film>> listFilms() async{
+  Future<List<Film>> listFilms() async {
     return originalFilms;
   }
 
   Future<String> stringFilms(List<Film> films) async {
     String res = "";
     films.forEach((element) {
-      res += (element.toString())+"\n";
+      res += (element.toString()) + "\n";
     });
     return res;
   }
 
-  List<Film> filterFilmsVoteVerage(List<Film> films, Double param) {
-    return films.where((element) => element.voteVerage>param).toList();
+  List<Film> filterFilmsVoteVerage(List<Film> films, double param) {
+    return films.where((element) => element.voteVerage > param).toList();
   }
 
-  /* List<Film> filterFilmsCustom (List<Film> films, String param){
-
-  }*/
   print(await listFilms());
   print('\n');
   print(await stringFilms(originalFilms));
   print('\n');
-  print(filterFilmsVoteVerage(originalFilms,2));
+  print(filterFilmsVoteVerage(originalFilms, 2));
 }
